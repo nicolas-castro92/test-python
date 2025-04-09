@@ -1,0 +1,33 @@
+name: Test Unitarios y Cobertura
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Ejecutar Pruebas y Revisar Cobertura
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chequear Código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Instalar Dependencias
+        run: pip install coverage
+
+      - name: Ejecutar Pruebas con Cobertura
+        run: |
+          coverage run -m unittest test_calculos.py
+          coverage report --fail-under=80  # Falla si la cobertura es inferior al 80%
+
+      - name: Generar Reporte HTML
+        run: coverage html
