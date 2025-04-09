@@ -3,7 +3,7 @@ from calculos import raiz_cuadrada
 
 class TestCalculos(unittest.TestCase):
     def test_raiz_cuadrada_valor_positivo(self):
-        self.assertAlmostEqual(raiz_cuadrada(7), 3.0)
+        self.assertAlmostEqual(raiz_cuadrada(9), 3.0)
         self.assertAlmostEqual(raiz_cuadrada(16), 4.0)
 
     def test_raiz_cuadrada_cero(self):
