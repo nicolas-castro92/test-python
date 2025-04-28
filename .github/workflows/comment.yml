@@ -1,10 +1,10 @@
 # .github/workflows/hola_mundo.yml
 
-name: Hola Mundo
+name: Hola Mundo en Commit
 
 on:
   workflow_run:
-    workflows: ["Ejecutar Pruebas y Cobertura"]  # El nombre exacto del workflow de test
+    workflows: ["Ejecutar Pruebas y Cobertura"]
     types:
       - completed
 
@@ -15,11 +15,18 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
 
     steps:
-      - name: Crear Comentario en Commit
-        uses: peter-evans/create-or-update-comment@v3
+      - name: Crear Comentario en el Commit
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.event.workflow_run.repository.full_name }}
-          commit-sha: ${{ github.event.workflow_run.head_sha }}
-          body: |
-            👋 ¡Hola Mundo! Este commit ha fallado en las pruebas.
+          script: |
+            const commitSha = "${{ github.event.workflow_run.head_sha }}";
+            const owner = "${{ github.repository_owner }}";
+            const repo = "${{ github.event.workflow_run.repository.name }}";
+            const body = "👋 ¡Hola Mundo! Este commit ha fallado en las pruebas.";
+
+            await github.rest.repos.createCommitComment({
+              owner,
+              repo,
+              commit_sha: commitSha,
+              body
+            });
