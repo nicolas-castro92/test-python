@@ -6,11 +6,6 @@ on:
       - 'feature/**'
       - main
       - develop
-  pull_request:
-    branches:
-      - 'feature/**'
-      - main
-      - develop
 
 jobs:
   tests:
@@ -36,11 +31,11 @@ jobs:
           coverage report > coverage.txt
           coverage html
 
-      - name: Comentar si Coverage es Bajo
-        if: env.LOW_COVERAGE == 'true'
+      - name: Comentar si Coverage es Bajo en el Commit
+        if: env.LOW_COVERAGE == 'true'  # Solo ejecuta si la cobertura es baja
         uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          commit-sha: ${{ github.sha }}  # Esto pone el comentario en el commit directamente
           body: |
             🚨 **Coverage bajo el mínimo requerido (80%)**
             
