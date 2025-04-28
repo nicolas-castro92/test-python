@@ -1,0 +1,33 @@
+# .github/workflows/linter.yml
+
+name: Ejecutar Pylint
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - main
+      - develop
+
+jobs:
+  lint:
+    name: Análisis de Código con Pylint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Instalar Dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+
+      - name: Ejecutar Pylint
+        run: |
+          pylint **/*.py --fail-under=7
