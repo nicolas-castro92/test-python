@@ -1,5 +1,3 @@
-# .github/workflows/hola_mundo.yml
-
 name: Hola Mundo en Commit
 
 on:
@@ -18,12 +16,26 @@ jobs:
       - name: Crear Comentario en el Commit
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}  # 👉 Aquí agregamos el token
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const commitSha = "${{ github.event.workflow_run.head_sha }}";
             const owner = "${{ github.repository_owner }}";
             const repo = "${{ github.event.workflow_run.repository.name }}";
-            const body = "👋 ¡Hola Mundo! Este commit ha fallado en las pruebas.";
+            const buildUrl = "${{ github.event.workflow_run.html_url }}";  // Link al build fallido
+            const failureMessage = "👋 ¡Hola Mundo! Este commit ha fallado en las pruebas. Haz clic [aquí](" + buildUrl + ") para más detalles.";
+
+            // Obtener detalles del fallo (si lo deseas)
+            const jobs = await github.rest.actions.listWorkflowJobs({
+              owner,
+              repo,
+              workflow_run_id: github.event.workflow_run.id
+            });
+
+            const failedJobs = jobs.data.jobs.filter(job => job.conclusion === 'failure');
+            const failedJobNames = failedJobs.map(job => job.name).join(", ");
+
+            // Añadir el mensaje detallado al comentario
+            const body = failureMessage + " Los siguientes trabajos fallaron: " + failedJobNames;
 
             await github.rest.repos.createCommitComment({
               owner,
