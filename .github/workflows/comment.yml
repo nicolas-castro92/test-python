@@ -1,37 +1,19 @@
-# .github/workflows/comment.yml
+# .github/workflows/hola_mundo.yml
 
-name: Comentar si Coverage es Bajo en el Commit
+name: Hola Mundo
 
 on:
   workflow_run:
-    workflows: ["Ejecutar Pruebas y Cobertura"]  # Depende del workflow anterior
+    workflows: ["Ejecutar Pruebas y Cobertura"]  # Este es el nombre del primer workflow
     types:
-      - completed  # Solo se ejecuta si el workflow de pruebas ha terminado
+      - completed  # Se ejecuta cuando el workflow anterior termina
 
 jobs:
-  comment:
-    name: Comentar en el Commit si Coverage es Bajo
+  print_hello_world:
     runs-on: ubuntu-latest
-    if: ${{ failure() && contains(needs.tests.outputs.result, 'failure') }}  # Solo ejecuta si el primer flujo falló
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}  # Se ejecuta solo si el flujo anterior falla
 
     steps:
-      - name: Chequear Código
-        uses: actions/checkout@v3
-
-      - name: Comentar en el Commit
+      - name: Mostrar Hola Mundo
         run: |
-          echo "La cobertura no cumple el umbral. Reporte:"
-          cat coverage.txt  # Imprime el reporte de cobertura
-
-      - name: Crear o Actualizar el Comentario en el Commit
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          commit-sha: ${{ github.sha }}  # Pone el comentario en el commit directamente
-          body: |
-            🚨 **Coverage bajo el mínimo requerido (80%)**
-            
-            El reporte de cobertura es:
-            ```
-            $(cat coverage.txt)
-            ```
-
+          echo "Hola Mundo"
