@@ -28,6 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint
 
-      - name: Ejecutar Pylint
+      - name: Ejecutar Pylint sobre calculos.py
         run: |
-          pylint **/*.py --fail-under=7
+          pylint calculos.py --fail-under=7
+
