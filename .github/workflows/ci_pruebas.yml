@@ -14,19 +14,19 @@ jobs:
 
     steps:
       - name: Chequear Código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Configurar Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v3
         with:
           python-version: '3.9'
 
       - name: Instalar Dependencias
         run: pip install coverage
 
-      - name: Ejecutar Pruebas con Coverage
+      - name: Ejecutar Pruebas con Cobertura
         run: |
-          coverage run -m unittest discover -s tests
+          coverage run -m unittest test_calculos.py
           coverage report --fail-under=80 || echo "LOW_COVERAGE=true" >> $GITHUB_ENV
           coverage report > coverage.txt
           coverage html
@@ -35,7 +35,7 @@ jobs:
         if: env.LOW_COVERAGE == 'true'  # Solo ejecuta si la cobertura es baja
         uses: peter-evans/create-or-update-comment@v3
         with:
-          commit-sha: ${{ github.sha }}  # Esto pone el comentario en el commit directamente
+          commit-sha: ${{ github.sha }}  # Pone el comentario en el commit directamente
           body: |
             🚨 **Coverage bajo el mínimo requerido (80%)**
             
