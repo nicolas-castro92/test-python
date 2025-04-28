@@ -13,24 +13,18 @@ on:
       - 'feature/**'
 
 jobs:
-  lint:
-    name: Analizar Código con Pylint y Reviewdog
+  pylint:
+    name: Ejecutar Pylint sobre calculos.py con Reviewdog
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout del Código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v3
+      - name: Ejecutar Pylint sobre calculos.py con Reviewdog
+        uses: dciborow/action-pylint@0.1.0
         with:
-          python-version: '3.9'
-
-      - name: Instalar Dependencias
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint reviewdog
-
-      - name: Ejecutar Pylint con Reviewdog
-        run: |
-          pylint calculos.py --output-format=parseable | reviewdog -f=parseable -name="pylint" -reporter=github-pr-review -level=error
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review  # Publica los comentarios en el PR
+          level: error  # Los errores se marcan como "error"
+          glob_pattern: "calculos.py"  # Solo analiza calculos.py
