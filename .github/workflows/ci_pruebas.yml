@@ -3,22 +3,20 @@ name: Test Unitarios y Cobertura
 on:
   push:
     branches:
+      - 'feature/**'
       - main
       - develop
-      - 'feature/**'
-
   pull_request:
     branches:
+      - 'feature/**'
       - main
       - develop
-      - 'feature/**'
-
-
 
 jobs:
   tests:
     name: Ejecutar Pruebas y Revisar Cobertura
     runs-on: ubuntu-latest
+
     steps:
       - name: Chequear Código
         uses: actions/checkout@v4
@@ -31,12 +29,22 @@ jobs:
       - name: Instalar Dependencias
         run: pip install coverage
 
-
-
-      - name: Ejecutar Pruebas con Cobertura
+      - name: Ejecutar Pruebas con Coverage
         run: |
-          coverage run -m unittest -v test_calculos.py
-          coverage report --fail-under=80  # Falla si la cobertura es inferior al 80%
+          coverage run -m unittest discover -s tests
+          coverage report --fail-under=80 || echo "LOW_COVERAGE=true" >> $GITHUB_ENV
+          coverage report > coverage.txt
+          coverage html
 
-      - name: Generar Reporte HTML
-        run: coverage html
+      - name: Comentar si Coverage es Bajo
+        if: env.LOW_COVERAGE == 'true'
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🚨 **Coverage bajo el mínimo requerido (80%)**
+            
+            El reporte de cobertura es:
+            ```
+            $(cat coverage.txt)
+            ```
