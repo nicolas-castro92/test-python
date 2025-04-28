@@ -4,16 +4,22 @@ name: Hola Mundo
 
 on:
   workflow_run:
-    workflows: ["Ejecutar Pruebas y Cobertura"]  # Este es el nombre del primer workflow
+    workflows: ["Ejecutar Pruebas y Cobertura"]  # El nombre exacto del workflow de test
     types:
-      - completed  # Se ejecuta cuando el workflow anterior termina
+      - completed
 
 jobs:
-  print_hello_world:
+  comment:
+    name: Comentar en Commit si Pruebas Fallan
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}  # Se ejecuta solo si el flujo anterior falla
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
 
     steps:
-      - name: Mostrar Hola Mundo
-        run: |
-          echo "Hola Mundo"
+      - name: Crear Comentario en Commit
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.event.workflow_run.repository.full_name }}
+          commit-sha: ${{ github.event.workflow_run.head_sha }}
+          body: |
+            👋 ¡Hola Mundo! Este commit ha fallado en las pruebas.
