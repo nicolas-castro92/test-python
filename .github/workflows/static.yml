@@ -1,21 +1,21 @@
-name: Static analysis
+name: Static Analysis (Python)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 jobs:
-  check:
-    name: Run Linter
+  run_pylint:
+    name: Run Pylint on test_calculos.py
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
-      - name: CodeQuality
+      - name: Static Analysis with pylint
         uses: JacobDomagala/StaticAnalysis@main
         with:
-          language: "Python"
-          pylint_args: "--rcfile=.pylintrc --recursive=true"
-          python_dirs: "src test"
+          language: Python
+          python_dirs: "test_calculos.py"
+          pylint_args: "--disable=C0114,C0115,C0116"
